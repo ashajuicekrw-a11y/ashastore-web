@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { MessageCircle, ShieldCheck, Zap, Sparkles, ChevronDown } from 'lucide-react';
+import { 
+  MessageCircle, ShieldCheck, Zap, Sparkles, ChevronDown, 
+  LayoutGrid, Film, Music, PenTool, Shield, Gamepad2, 
+  GraduationCap, Bot, Monitor, Search 
+} from 'lucide-react';
 import { createClient } from 'next-sanity';
 
 // === 1. KONEKSI KE GUDANG SANITY ===
@@ -15,15 +19,15 @@ const sanityClient = createClient({
 
 // === DATA KATEGORI ===
 const navItems = [
-  { label: 'Semua', icon: '' },
-  { label: 'Streaming', icon: '' },
-  { label: 'Musik', icon: '' },
-  { label: 'Desain', icon: '' },
-  { label: 'VPN', icon: '' },
-  { label: 'Game', icon: '' },
-  { label: 'Edukasi', icon: '' },
-  { label: 'AI Tools', icon: '' },
-  { label: 'Software', icon: '' }
+  { label: 'Semua', icon: <LayoutGrid className="w-4 h-4" /> },
+  { label: 'Streaming', icon: <Film className="w-4 h-4" /> },
+  { label: 'Musik', icon: <Music className="w-4 h-4" /> },
+  { label: 'Desain', icon: <PenTool className="w-4 h-4" /> },
+  { label: 'VPN', icon: <Shield className="w-4 h-4" /> },
+  { label: 'Game', icon: <Gamepad2 className="w-4 h-4" /> },
+  { label: 'Edukasi', icon: <GraduationCap className="w-4 h-4" /> },
+  { label: 'AI Tools', icon: <Bot className="w-4 h-4" /> },
+  { label: 'Software', icon: <Monitor className="w-4 h-4" /> }
 ];
 
 // === KOMPONEN NAVBAR ===
@@ -34,9 +38,9 @@ const Navbar = ({ activeCategory, setActiveCategory }: any) => {
   return (
     <nav className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur-xl">
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-  <Link href="/" className="flex items-center gap-2.5" onClick={() => setActiveCategory('Semua')}>
-  <span className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Asha<span className="text-cyan-400">Store</span></span>
-</Link>
+        <Link href="/" className="flex items-center gap-2.5" onClick={() => setActiveCategory('Semua')}>
+          <span className="text-xl md:text-2xl font-extrabold text-white tracking-tight">Asha<span className="text-cyan-400">Store</span></span>
+        </Link>
         
         {/* Tombol Kategori Desktop */}
         <div className="hidden lg:flex gap-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800">
@@ -82,7 +86,7 @@ const Navbar = ({ activeCategory, setActiveCategory }: any) => {
                         : 'text-slate-300 hover:bg-slate-800 hover:text-white'
                     }`}
                   >
-                    <span className="text-sm">{item.icon}</span>
+                    <span className="text-sm flex items-center justify-center">{item.icon}</span>
                     <span>{item.label}</span>
                   </button>
                 ))}
@@ -114,13 +118,11 @@ const Hero = () => (
   </section>
 );
 
-
 // === KOMPONEN KARTU PRODUK ===
 const ProductCard = ({ product, noWA }: { product: any, noWA: string }) => {
   const hasVariants = product.variants && product.variants.length > 0;
   const [selectedVariant, setSelectedVariant] = useState(hasVariants ? product.variants[0] : null);
 
-  // AMAN: Jika harga varian atau harga default tidak ada, otomatis di-set ke 0
   const currentPrice = selectedVariant 
     ? (selectedVariant.variantPrice || 0) 
     : (product.price || 0);
@@ -137,7 +139,10 @@ const ProductCard = ({ product, noWA }: { product: any, noWA: string }) => {
         {product.imageUrl ? (
           <img src={product.imageUrl} alt={title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-slate-600 text-sm">Premium Item</div>
+          <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center text-slate-500">
+            <Sparkles className="h-8 w-8 mb-2 opacity-50" />
+            <span className="text-xs font-semibold uppercase tracking-widest">Premium</span>
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
         
@@ -184,10 +189,24 @@ const ProductCard = ({ product, noWA }: { product: any, noWA: string }) => {
   );
 };
 
+// === KOMPONEN SKELETON (LOADING PROFESIONAL) ===
+const SkeletonCard = () => (
+  <div className="flex flex-col h-full rounded-3xl border border-slate-800 bg-slate-900/40 animate-pulse">
+    <div className="h-48 md:h-56 bg-slate-800/50 rounded-t-3xl"></div>
+    <div className="p-5 md:p-6 flex flex-col flex-grow gap-4">
+      <div className="h-6 w-3/4 bg-slate-800/50 rounded-lg"></div>
+      <div className="h-4 w-full bg-slate-800/50 rounded-lg"></div>
+      <div className="h-4 w-5/6 bg-slate-800/50 rounded-lg"></div>
+      <div className="mt-auto h-12 w-full bg-slate-800/50 rounded-xl"></div>
+    </div>
+  </div>
+);
+
 // === DAFTAR PRODUK ===
 const Products = ({ activeCategory }: { activeCategory: string }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const noWA = '6282223750826'; 
 
   useEffect(() => {
@@ -206,18 +225,41 @@ const Products = ({ activeCategory }: { activeCategory: string }) => {
     fetchProducts();
   }, []);
 
-  const filteredProducts = activeCategory === 'Semua' 
-    ? products 
-    : products.filter(product => product.category === activeCategory);
+  const filteredProducts = products.filter(product => {
+    const matchCategory = activeCategory === 'Semua' || product.category === activeCategory;
+    const matchSearch = (product.title || '').toLowerCase().includes(searchQuery.toLowerCase());
+    return matchCategory && matchSearch;
+  });
 
-  if (loading) return <div className="py-20 text-center text-cyan-400 text-sm animate-pulse">Menyiapkan katalog premium...</div>;
+  if (loading) return (
+    <section className="py-6 px-4 md:px-6">
+      <div className="container mx-auto max-w-6xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
+        </div>
+      </div>
+    </section>
+  );
 
   return (
     <section className="py-6 px-4 md:px-6">
       <div className="container mx-auto max-w-6xl">
+        
+        {/* Fitur Pencarian */}
+        <div className="mb-8 relative max-w-md mx-auto md:mx-0 flex items-center">
+          <Search className="absolute left-4 h-5 w-5 text-slate-500" />
+          <input 
+            type="text" 
+            placeholder="Cari produk (misal: Netflix, Canva)..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-slate-900/50 border border-slate-800 text-white text-sm rounded-2xl pl-12 pr-5 py-3.5 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all backdrop-blur-sm"
+          />
+        </div>
+
         {filteredProducts.length === 0 && (
           <div className="text-center py-16 bg-slate-900/40 rounded-3xl border border-slate-800">
-            <p className="text-slate-400 text-sm">Belum ada produk untuk kategori <b className="text-white">{activeCategory}</b>.</p>
+            <p className="text-slate-400 text-sm">Produk tidak ditemukan.</p>
           </div>
         )}
 
@@ -241,10 +283,22 @@ export default function Home() {
       <Hero />
       <Products activeCategory={activeCategory} />
       
-      <footer className="border-t border-slate-800/60 bg-[#070b14] py-10 mt-16 text-center">
-        <p className="text-slate-500 text-xs font-medium">
+      {/* FOOTER PROFESIONAL */}
+      <footer className="border-t border-slate-800/60 bg-[#04070d] py-12 mt-16">
+        <div className="container mx-auto px-6 max-w-6xl flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-center md:text-left">
+            <span className="text-2xl font-extrabold text-white tracking-tight">Asha<span className="text-cyan-400">Store</span></span>
+            <p className="text-slate-500 text-xs mt-2 max-w-xs">Penyedia layanan digital premium terpercaya. Legal, aman, dan bergaransi penuh.</p>
+          </div>
+          <div className="flex gap-4 text-xs font-medium text-slate-400">
+            <a href="#" className="hover:text-cyan-400 transition-colors">Syarat & Ketentuan</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">Kebijakan Privasi</a>
+            <a href="#" className="hover:text-cyan-400 transition-colors">FAQ</a>
+          </div>
+        </div>
+        <div className="text-center mt-12 pt-8 border-t border-slate-800/40 text-slate-600 text-xs font-medium">
           &copy; {new Date().getFullYear()} AshaStore. All rights reserved.
-        </p>
+        </div>
       </footer>
     </main>
   );
