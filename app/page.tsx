@@ -130,8 +130,7 @@ const ProductCard = ({ product, noWA }: { product: any, noWA: string }) => {
   const variantName = selectedVariant && selectedVariant.variantName ? ` (${selectedVariant.variantName})` : '';
   const title = product.title || 'Produk Tanpa Nama';
   
-  const pesan = `Halo Admin AshaStore! 👋\n\nSaya mau order layanan premium nih:\n\n*🛒 Produk:* ${title}${variantName}\n*💳 Harga:* Rp ${currentPrice.toLocaleString('id-ID')}\n\nBoleh minta detail pembayarannya? Terima kasih!`;
-  const waLink = `https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}`;
+const pesan = `Halo Tim AshaStore,\n\nSaya ingin melakukan pemesanan untuk produk digital berikut:\n\n*Detail Pesanan:*\n▪️ *Produk:* ${title}${variantName}\n▪️ *Harga:* Rp ${currentPrice.toLocaleString('id-ID')}\n\nMohon informasi metode pembayarannya. Terima kasih.`;  const waLink = `https://wa.me/${noWA}?text=${encodeURIComponent(pesan)}`;
 
   return (
     <div className="group flex flex-col h-full rounded-3xl border border-slate-800 bg-slate-900/60 backdrop-blur-sm overflow-hidden hover:border-cyan-500/50 hover:shadow-[0_0_30px_-10px_rgba(34,211,238,0.2)] transition-all duration-300">
