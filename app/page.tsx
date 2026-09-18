@@ -111,7 +111,6 @@ const Hero = () => (
         <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">100% Legal, Aman & Bergaransi</span>
       </h1>
       <div className="flex flex-wrap justify-center gap-4 text-xs md:text-sm font-medium text-slate-300 mt-6">
-        // Ganti bagian ini:
 <span className="flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-green-400"/> Garansi Anti-Banned</span>
 <span className="flex items-center gap-1.5"><Sparkles className="h-4 w-4 text-cyan-400"/> 100% Legal & Resmi</span>
       </div>
